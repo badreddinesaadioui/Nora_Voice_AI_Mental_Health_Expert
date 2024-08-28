@@ -2,3 +2,6 @@ streamlit
 openai
 audio_recorder_streamlit
 streamlit-float
+langchain
+langchain_community
+pylance
