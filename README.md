@@ -2,7 +2,7 @@
 
 ## Overview
 
-Nora is a mental health chatbot built with Streamlit and OpenAI. It provides an interactive voice and text-based experience to simulate conversations with a virtual psychologist.
+Nora is a mental health chatbot built with Streamlit and OpenAI (Gpt 4o mini, Whisper and OpenAI TTS). It provides an interactive voice and text-based experience to simulate conversations with a virtual psychologist.
 
 ## Features
 
