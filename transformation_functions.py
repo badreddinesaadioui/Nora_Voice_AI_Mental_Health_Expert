@@ -25,14 +25,23 @@ def get_answer(messages):
 
 
 def speech_to_text(audio_data):
-    with open(audio_data, "rb") as audio_file:
-        transcript = client.audio.transcriptions.create(
-            model="whisper-1",
-            response_format="text",
-            file=audio_file,
-            language="fr"
-        )
-    return transcript
+    try:
+        with open(audio_data, "rb") as audio_file:
+            transcript = client.audio.transcriptions.create(
+                model="whisper-1",
+                response_format="text",
+                file=audio_file,
+                language="fr"
+            )
+        return transcript
+    except openai.error.OpenAIError as e:
+        # Log the error or print it to the console for debugging purposes
+        print(f"An error occurred: {e}")
+        # Show a user-friendly message in French
+        st.warning("Il y a eu un problème lors du traitement de votre demande. Veuillez ré-enregistrer l'audio, s'il vous plaît.")
+        # Return None to indicate failure
+        return None
+
 
 
 def text_to_speech(input_text):
