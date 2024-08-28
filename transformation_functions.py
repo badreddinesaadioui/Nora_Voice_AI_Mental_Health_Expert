@@ -40,7 +40,7 @@ def text_to_speech(input_text):
         model="tts-1",
         voice="nova",
         input=input_text,
-        speed=1.3
+        speed=1
     )
     webm_file_path = "temp_audio_play.mp3"
     with open(webm_file_path, "wb") as f:
