@@ -126,15 +126,17 @@ else:
 
     # Process audio input and convert to text
     if audio_bytes:
-        with st.spinner("🤔..."):
+        with st.spinner("👂..."):  
             webm_file_path = "temp_audio.mp3"
             with open(webm_file_path, "wb") as f:
                 f.write(audio_bytes)
 
             if os.path.getsize(webm_file_path) < 100:  # Ensure the file is not too short
-                st.warning("The audio is too short. Please record a longer audio.")
+                st.warning("L'audio est très court.")
             else:
-                transcript = speech_to_text(webm_file_path)
+        
+                with st.spinner("👂..."):
+                    transcript = speech_to_text(webm_file_path)
 
                 if transcript:
                     st.session_state.messages.append(
