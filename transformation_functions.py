@@ -3,7 +3,6 @@ import streamlit as st
 import base64
 import os
 import openai
-from openai import error
 
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 api_key = st.secrets["OPENAI_API_KEY"]
