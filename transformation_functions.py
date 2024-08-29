@@ -3,8 +3,9 @@ import streamlit as st
 import base64
 import os
 import openai
+from openai import error
 
-
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 api_key = st.secrets["OPENAI_API_KEY"]
 client = OpenAI(api_key=api_key)
 
@@ -28,12 +29,29 @@ def get_answer(messages):
 
 def speech_to_text(audio_data):
     with open(audio_data, "rb") as audio_file:
-        transcript = client.audio.transcriptions.create(
-            model="whisper-1",
-            response_format="text",
-            file=audio_file,
-            language="fr"
-        )
+        try:
+            # Check if file is too short
+            audio_file.seek(0, os.SEEK_END)
+            file_size = audio_file.tell()
+            if file_size < 100:  # Example threshold for file size in bytes
+                raise ValueError("Audio file is too short to process.")
+            
+            # Reset file pointer
+            audio_file.seek(0)
+            
+            transcript = client.audio.transcriptions.create(
+                model="whisper-1",
+                response_format="text",
+                file=audio_file,
+                language="fr"
+            )
+        except ValueError as e:
+            st.warning(str(e))
+            return None
+        except openai.error.OpenAIError as e:
+            st.error(f"An error occurred while processing the audio: {str(e)}")
+            return None
+
     return transcript
 
 
@@ -59,5 +77,4 @@ def autoplay_audio(file_path: str):
     </audio>
     """
     st.markdown(md, unsafe_allow_html=True)
-
 
