@@ -3,7 +3,7 @@ import streamlit as st
 import base64
 import os
 import openai
-from openai import error
+
 
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 api_key = st.secrets["OPENAI_API_KEY"]
@@ -45,12 +45,7 @@ def speech_to_text(audio_data):
                 file=audio_file,
                 language="fr"
             )
-        except ValueError as e:
-            st.warning(str(e))
-            return None
-        except openai.error.OpenAIError as e:
-            st.error(f"An error occurred while processing the audio: {str(e)}")
-            return None
+
 
     return transcript
 
