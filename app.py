@@ -6,7 +6,7 @@ from streamlit_float import *
 from langchain_community.llms import OpenAI
 import tempfile
 import openai
-
+import langchain
 # ==================================================
 #                     SET UP VARIABLES
 # ==================================================
@@ -14,7 +14,7 @@ LANGCHAIN_TRACING_V2 = True
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGCHAIN_API_KEY"] = st.secrets.get("LANGCHAIN_API_KEY")
-os.environ["LANGCHAIN_PROJECT"] = "Nora voice bot"
+os.environ["LANGCHAIN_PROJECT"] = "NoraVoiceBot"
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 llm = OpenAI(temperature=0)
@@ -126,26 +126,27 @@ else:
 
     # Process audio input and convert to text
     if audio_bytes:
-        with st.spinner("👂..."):  
-            webm_file_path = "temp_audio.mp3"
-            with open(webm_file_path, "wb") as f:
-                f.write(audio_bytes)
+        webm_file_path = "temp_audio.mp3"
+        with open(webm_file_path, "wb") as f:
+            f.write(audio_bytes)
 
-            if os.path.getsize(webm_file_path) < 100:  # Ensure the file is not too short
-                st.warning("L'audio est très court.")
+        # Ensure the file is not too short
+        if os.path.getsize(webm_file_path) < 100:
+            st.warning("L'audio est très court.")
+        else:
+
+            with st.spinner("👂..."):
+                transcript = speech_to_text(webm_file_path)
+
+            if transcript:
+                st.session_state.messages.append(
+                    {"role": "user", "content": transcript})
+                with st.chat_message("user", avatar="👤"):
+                    st.write(transcript)
+                os.remove(webm_file_path)
             else:
-        
-                with st.spinner("👂..."):
-                    transcript = speech_to_text(webm_file_path)
-
-                if transcript:
-                    st.session_state.messages.append(
-                        {"role": "user", "content": transcript})
-                    with st.chat_message("user", avatar="👤"):
-                        st.write(transcript)
-                    os.remove(webm_file_path)
-                else:
-                    st.warning("Unable to transcribe the audio. Please try again.")
+                st.warning(
+                    "Unable to transcribe the audio. Please try again.")
 
     if st.session_state.messages[-1]["role"] != "assistant":
         with st.chat_message("assistant", avatar="👩🏻‍⚕️"):
