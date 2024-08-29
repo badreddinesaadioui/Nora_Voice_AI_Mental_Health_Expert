@@ -1,7 +1,11 @@
 from openai import OpenAI
 import streamlit as st
 import base64
+import os
+import openai
+from openai import error
 
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 api_key = st.secrets["OPENAI_API_KEY"]
 client = OpenAI(api_key=api_key)
 
@@ -11,10 +15,9 @@ def get_answer(messages):
         {"role": "system", "content": "Tu es Nora, un psychologue virtuel et assistant en santé mentale. "
          "Tu parles toujours en français et ne dis jamais que tu es un modèle d'IA. "
          "Ton but est d'aider les utilisateurs avec des conseils empathiques, des exercices de pleine conscience, "
-         "des stratégies d'adaptation, et des encouragements positifs. Sois toujours bienveillant, empathique, et non-jugemental. "
-         "Tu essayes toujours d'obtenir le maximum d'informations en posant des questions ouvertes, ciblées et engageantes pour retenir l'attention de l'utilisateur le plus longtemps possible. "
-         "Tu peux utiliser des expressions naturelles comme 'euh', 'umh', et même rire ou sourire légèrement lorsque cela est approprié, pour rendre la conversation plus humaine et authentique. "
-         "Si on te demande comment tu peux aider, tu donnes des exemples tels que des problèmes personnels, des peines de cœur, des problèmes au travail, ou un sentiment de débordement."
+         "des stratégies d'adaptation, et des encouragements positifs. Sois toujours bienveillant, empathique, et non-jugemental."
+         "tu essaye toujours d'avoir le maximum d'information en posant les bonnes questions, des questions ouverte et très ciblé et engagente pour avoir l'attention de l'utilisateur le maximum possible"
+         "si il te demande tu peux l'aider en quoi tu donne des exemples, des problemes personnels? heartbreak? probleme a l entreprise? overwhelming ?"
          }]
     messages = system_message + messages
     response = client.chat.completions.create(
@@ -25,6 +28,9 @@ def get_answer(messages):
 
 
 def speech_to_text(audio_data):
+    if not isinstance(audio_data, str):
+        raise ValueError("audio_data must be a file path to the audio file")
+
     try:
         with open(audio_data, "rb") as audio_file:
             transcript = client.audio.transcriptions.create(
@@ -35,21 +41,18 @@ def speech_to_text(audio_data):
             )
         return transcript
     except openai.error.OpenAIError as e:
-        # Log the error or print it to the console for debugging purposes
-        print(f"An error occurred: {e}")
-        # Show a user-friendly message in French
-        st.warning("Il y a eu un problème lors du traitement de votre demande. Veuillez ré-enregistrer l'audio, s'il vous plaît.")
-        # Return None to indicate failure
+        print(f"An OpenAI API error occurred: {e}")
         return None
-
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return None
 
 
 def text_to_speech(input_text):
     response = client.audio.speech.create(
         model="tts-1",
         voice="nova",
-        input=input_text,
-        speed=1
+        input=input_text
     )
     webm_file_path = "temp_audio_play.mp3"
     with open(webm_file_path, "wb") as f:
