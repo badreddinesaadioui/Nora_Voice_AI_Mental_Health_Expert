@@ -28,6 +28,19 @@ def get_answer(messages):
 
 
 def speech_to_text(audio_data):
+    filter_out_biases_statics = {
+        "Merci d'avoir regardé cette vidéo.",
+        "Merci d'avoir regardé cette vidéo!",
+        "Merci d'avoir regardé la vidéo.",
+        "J'espère que vous avez apprécié la vidéo.",
+        "Je vous remercie de vous abonner",
+        "Sous-titres réalisés para la communauté d'Amara.org",
+        "Merci d'avoir regardé!",
+        "❤️ par SousTitreur.com",
+        "— Sous-titrage ST'501 —",
+        "Thanks for watching!",
+    }
+
     with open(audio_data, "rb") as audio_file:
         transcript = client.audio.transcriptions.create(
             model="whisper-1",
@@ -35,6 +48,18 @@ def speech_to_text(audio_data):
             file=audio_file,
             language="fr"
         )
+
+    # Split the transcript into lines
+    transcript_lines = transcript.split('\n')
+
+    # Filter out lines that match any of the phrases
+    filtered_transcript_lines = [
+        line for line in transcript_lines if line.strip() not in filter_out_biases_statics
+    ]
+
+    # Reassemble the filtered transcript
+    transcript = '\n'.join(filtered_transcript_lines)
+
     return transcript
 
 
