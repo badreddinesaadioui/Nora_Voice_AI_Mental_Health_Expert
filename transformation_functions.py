@@ -39,6 +39,9 @@ def speech_to_text(audio_data):
         "❤️ par SousTitreur.com",
         "— Sous-titrage ST'501 —",
         "Thanks for watching!",
+        "A bientôt.",
+        "À tout à l'heure."
+
     }
 
     with open(audio_data, "rb") as audio_file:
@@ -85,4 +88,5 @@ def autoplay_audio(file_path: str):
     </audio>
     """
     st.markdown(md, unsafe_allow_html=True)
+
 
