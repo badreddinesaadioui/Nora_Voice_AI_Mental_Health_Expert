@@ -29,23 +29,12 @@ def get_answer(messages):
 
 def speech_to_text(audio_data):
     with open(audio_data, "rb") as audio_file:
-        try:
-            # Check if file is too short
-            audio_file.seek(0, os.SEEK_END)
-            file_size = audio_file.tell()
-            if file_size < 100:  # Example threshold for file size in bytes
-                raise ValueError("Audio file is too short to process.")
-            
-            # Reset file pointer
-            audio_file.seek(0)
-            
-            transcript = client.audio.transcriptions.create(
-                model="whisper-1",
-                response_format="text",
-                file=audio_file,
-                language="fr"
-            )
-
+        transcript = client.audio.transcriptions.create(
+            model="whisper-1",
+            response_format="text",
+            file=audio_file,
+            language="fr"
+        )
     return transcript
 
 
