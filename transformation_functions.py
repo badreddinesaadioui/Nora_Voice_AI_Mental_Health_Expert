@@ -46,7 +46,6 @@ def speech_to_text(audio_data):
                 language="fr"
             )
 
-
     return transcript
 
 
