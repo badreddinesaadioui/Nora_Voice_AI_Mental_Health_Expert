@@ -5,6 +5,7 @@ from audio_recorder_streamlit import audio_recorder
 from streamlit_float import *
 from langchain import OpenAI
 import tempfile
+import openai
 
 # ==================================================
 #                     SET UP VARIABLES
