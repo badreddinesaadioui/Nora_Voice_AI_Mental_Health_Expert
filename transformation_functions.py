@@ -31,6 +31,7 @@ def speech_to_text(audio_data):
     filter_out_biases_statics = {
         "Merci d'avoir regardé cette vidéo.",
         "Merci d'avoir regardé cette vidéo!",
+        "Merci d'avoir regardé cette vidéo !",
         "Merci d'avoir regardé la vidéo.",
         "J'espère que vous avez apprécié la vidéo.",
         "Je vous remercie de vous abonner",
@@ -40,7 +41,9 @@ def speech_to_text(audio_data):
         "— Sous-titrage ST'501 —",
         "Thanks for watching!",
         "A bientôt.",
-        "À tout à l'heure."
+        "À tout à l'heure.",
+        "Merci.",
+        "Merci et à bientôt."
 
     }
 
