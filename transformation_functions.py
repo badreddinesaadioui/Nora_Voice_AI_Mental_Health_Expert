@@ -3,6 +3,7 @@ import streamlit as st
 import base64
 import os
 import openai
+from openai import error
 
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 api_key = st.secrets["OPENAI_API_KEY"]
@@ -27,24 +28,14 @@ def get_answer(messages):
 
 
 def speech_to_text(audio_data):
-    if not isinstance(audio_data, str):
-        raise ValueError("audio_data must be a file path to the audio file")
-    
-    try:
-        with open(audio_data, "rb") as audio_file:
-            transcript = openai.Audio.transcribe(
-                model="whisper-1",
-                file=audio_file,
-                response_format="text",
-                language="fr"
-            )
-        return transcript
-    except openai.error.OpenAIError as e:
-        print(f"An OpenAI API error occurred: {e}")
-        return None
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return None
+    with open(audio_data, "rb") as audio_file:
+        transcript = client.audio.transcriptions.create(
+            model="whisper-1",
+            response_format="text",
+            file=audio_file,
+            language="fr"
+        )
+    return transcript
 
 
 def text_to_speech(input_text):
@@ -69,4 +60,5 @@ def autoplay_audio(file_path: str):
     </audio>
     """
     st.markdown(md, unsafe_allow_html=True)
+
 
