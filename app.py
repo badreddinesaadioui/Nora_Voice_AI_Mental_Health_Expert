@@ -130,14 +130,20 @@ else:
             webm_file_path = "temp_audio.mp3"
             with open(webm_file_path, "wb") as f:
                 f.write(audio_bytes)
-            transcript = speech_to_text(webm_file_path)
 
-            if transcript:
-                st.session_state.messages.append(
-                    {"role": "user", "content": transcript})
-                with st.chat_message("user", avatar="👤"):
-                    st.write(transcript)
-                os.remove(webm_file_path)
+            if os.path.getsize(webm_file_path) < 100:  # Ensure the file is not too short
+                st.warning("The audio is too short. Please record a longer audio.")
+            else:
+                transcript = speech_to_text(webm_file_path)
+
+                if transcript:
+                    st.session_state.messages.append(
+                        {"role": "user", "content": transcript})
+                    with st.chat_message("user", avatar="👤"):
+                        st.write(transcript)
+                    os.remove(webm_file_path)
+                else:
+                    st.warning("Unable to transcribe the audio. Please try again.")
 
     if st.session_state.messages[-1]["role"] != "assistant":
         with st.chat_message("assistant", avatar="👩🏻‍⚕️"):
